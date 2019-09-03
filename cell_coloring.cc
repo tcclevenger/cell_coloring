@@ -88,7 +88,7 @@ test()
    const unsigned int child_number = Utilities::string_to_int(&(cell->id().to_string().back()));
    unsigned int color = 0;
    if (child_number == 1 || child_number == 2)
-       color == 1;
+       color = 1;
 
    cell->set_material_id(color);
   }
