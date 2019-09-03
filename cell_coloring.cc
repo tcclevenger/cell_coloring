@@ -63,11 +63,13 @@ test()
       //initialize with 0
     }
 
+    std::cout << level << std::endl;
 
     for (auto &cell : tria.cell_iterators_on_level(level))
       if (cell->is_locally_owned_on_level())
       {
-        std::cout << cell->id().to_string() << std::endl;
+        std::cout << level << std::endl;
+        //std::cout << cell->id().to_string() << std::endl;
       }
 
 
