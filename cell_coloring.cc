@@ -50,36 +50,28 @@ test()
     Triangulation<dim>::limit_level_difference_at_vertices,
     parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy);
   GridGenerator::hyper_cube(tria, 0, 1);
-  tria.refine_global(1);
-  for (unsigned int cycle = 0; cycle < 2; ++cycle)
+  tria.refine_global(2);
+
+
+
+
+
+  for (unsigned int level=0; level<tria.n_global_levels(); ++level)
+  {
+    if (level=0)
     {
-      for (typename parallel::distributed::Triangulation<
-             dim>::active_cell_iterator cell = tria.begin_active();
-           cell != tria.end();
-           ++cell)
-        for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell; ++v)
-          {
-            if (dim == 2)
-              if (cell->vertex(v)[0] < 0.25 && cell->vertex(v)[1] < 0.25)
-                {
-                  cell->set_refine_flag();
-                  break;
-                }
-            if (dim == 3)
-              if (cell->vertex(v)[0] < 0.25 && cell->vertex(v)[1] < 0.25 &&
-                  cell->vertex(v)[2] < 0.25)
-                {
-                  cell->set_refine_flag();
-                  break;
-                }
-          }
-      tria.execute_coarsening_and_refinement();
+      //initialize with 0
     }
 
-  const unsigned int max_possible_level =
-    MGTools::max_level_for_coarse_mesh(tria);
-  pcout << "Max possible level for coarse mesh: " << max_possible_level
-          << std::endl;
+
+    for (auto &cell : tria.cell_iterators_on_level(level))
+    {
+      std::cout << cell->id().to_string() << std::endl;
+    }
+
+
+
+  }
 }
 
 
