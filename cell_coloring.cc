@@ -118,8 +118,9 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        std::array<std::uint8_t,level> child_indices
-            = get_indices<level>(cell->id().to_binary());
+        const unsigned int l = level;
+        std::array<std::uint8_t,l> child_indices
+            = get_indices<l>(cell->id().to_binary());
 
       }
 
