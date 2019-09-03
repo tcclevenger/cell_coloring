@@ -72,7 +72,7 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        std::array<unsigned int,4> binary_expression(cell->id().to_binary());
+        std::cout << cell->id().to_binary()[3] << std::endl;
 
       }
 
