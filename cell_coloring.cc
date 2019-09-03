@@ -72,7 +72,7 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        std::cout << *(cell->id().to_binary<dim>().back()) << std::endl;
+        std::cout << Utilities::string_to_int(cell->id().to_string().back()) << std::endl;
 
       }
 
