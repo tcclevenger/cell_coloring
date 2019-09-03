@@ -56,7 +56,7 @@ get_indices(const std::array<unsigned int, 4> &binary_representation)
 
   // Each child requires 'dim' bits to store its index
   const unsigned int children_per_value =
-    sizeof(binary_type::value_type) * 8 / dim;
+    sizeof(std::array<unsigned int, 4>::value_type) * 8 / dim;
   const unsigned int child_mask = (1 << dim) - 1;
 
   // Loop until all child indices have been read
