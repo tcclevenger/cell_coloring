@@ -19,6 +19,7 @@
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/utilities.h>
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/grid/grid_out.h>
 
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/tria.h>
@@ -77,10 +78,24 @@ test()
       }
 
     std::cout << std::endl;
-
-
-
   }
+
+
+
+
+  for (auto &cell : tria.active_cell_iterators())
+  {
+   const unsigned int child_number = Utilities::string_to_int(&(cell->id().to_string().back()));
+   unsigned int color = 0;
+   if (child_number == 1 || child_number == 2)
+       color == 1;
+
+   cell->set_material_id(color);
+  }
+
+  std::ofstream file("grid-active.vtk");
+  GridOut grid_out;
+  grid_out.write_vtk(tria,file);
 }
 
 
