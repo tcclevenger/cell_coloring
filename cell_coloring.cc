@@ -50,7 +50,7 @@ test()
         Triangulation<dim>::limit_level_difference_at_vertices,
         parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy);
   GridGenerator::hyper_cube(tria, 0, 1);
-  tria.refine_global(1);
+  tria.refine_global(2);
 
 
 
