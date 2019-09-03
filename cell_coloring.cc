@@ -46,9 +46,9 @@ test()
 
 
   parallel::distributed::Triangulation<dim> tria(
-    MPI_COMM_WORLD,
-    Triangulation<dim>::limit_level_difference_at_vertices,
-    parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy);
+        MPI_COMM_WORLD,
+        Triangulation<dim>::limit_level_difference_at_vertices,
+        parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy);
   GridGenerator::hyper_cube(tria, 0, 1);
   tria.refine_global(0);
 
@@ -65,9 +65,10 @@ test()
 
 
     for (auto &cell : tria.cell_iterators_on_level(level))
-    {
-      std::cout << cell->id().to_string() << std::endl;
-    }
+      if (cell->is_locally_owned_on_level())
+      {
+        std::cout << cell->id().to_string() << std::endl;
+      }
 
 
 
