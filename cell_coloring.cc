@@ -71,6 +71,9 @@ test()
       if (cell->is_locally_owned_on_level())
       {
         std::cout << cell->id().to_string() << std::endl;
+
+        std::cout << cell->id().to_binary<dim>().back() << std::endl;
+
       }
 
     std::cout << std::endl;
