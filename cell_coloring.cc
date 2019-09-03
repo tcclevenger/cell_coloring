@@ -50,7 +50,7 @@ get_indices(const std::array<unsigned int, 4> &binary_representation)
   // the rest stores the number of child indices.
   const unsigned int two_bit_mask = (1 << 2) - 1;
   const unsigned int dim          = binary_representation[1] & two_bit_mask;
-  n_child_indices                 = (binary_representation[1] >> 2);
+  const unsigned int n_child_indices                 = (binary_representation[1] >> 2);
 
   Assert(n_child_indices < child_indices.size(), ExcInternalError());
 
