@@ -108,6 +108,7 @@ test()
     if (level==0)
     {
       //initialize with 0
+      continue;
     }
 
     std::cout << level <<  ": " << std::endl;
@@ -116,6 +117,9 @@ test()
       if (cell->is_locally_owned_on_level())
       {
         std::cout << cell->id().to_string() << std::endl;
+
+        std::array<std::uint8_t,cell->level()> child_indices = get_indices<cell->level()>(cell->id().to_binary());
+
       }
 
     std::cout << std::endl;
