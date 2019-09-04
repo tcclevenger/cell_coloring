@@ -173,7 +173,7 @@ test()
   Vector<double> xcoord (tria.n_active_cells());
   for (auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
-      xcoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+      xcoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels())(0);
   data_out.add_data_vector (xcoord, "xcoord");
 
   data_out.build_patches ();
