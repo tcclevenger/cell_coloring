@@ -171,10 +171,19 @@ test()
   data_out.add_data_vector (subdomain, "subdomain");
 
   Vector<double> xcoord (tria.n_active_cells());
+  Vector<double> ycoord (tria.n_active_cells());
+  Vector<double> coord_sum (tria.n_active_cells());
   for (auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
+    {
       xcoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels())(0);
+      ycoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels())(1);
+
+      coord_sum(cell->active_cell_index()) = xcoord(cell->active_cell_index()) + ycoord(cell->active_cell_index());
+    }
   data_out.add_data_vector (xcoord, "xcoord");
+  data_out.add_data_vector (ycoord, "ycoord");
+  data_out.add_data_vector (coord_sum, "coord_sum");
 
   data_out.build_patches ();
 
