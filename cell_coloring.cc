@@ -38,6 +38,36 @@
 using namespace dealii;
 
 
+
+template <int dim>
+Point<dim, unsigned int>
+get_integer_cords (const CellId cell_id)
+{
+
+  std::vector child_indices;
+
+  std::string cell_id_str = cell_id.to_string();
+  while (cell_id_str.size() > 4)
+  {
+    child_indices.insert(child_indices.begin(),
+                         Utilities::string_to_int(&(cell_id_str.back())));
+
+    cell_id_str.pop_back();
+  }
+
+  std::cout << "Child indices: ";
+  for (auto it = child_indices.begin();
+       it != child_indices.end();
+       ++it)
+    std::cout << *it << " ";
+  std::cout << std::endl;
+
+  return Point<dim,unsigned int>();
+}
+
+
+
+
 template <int dim>
 void
 test()
@@ -73,7 +103,7 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        std::cout << Utilities::string_to_int(&(cell->id().to_string().back())) << std::endl;
+        Point<dim,unsigned int> cell_int_cords = get_integer_cords(cell->id());
 
       }
 
@@ -85,12 +115,12 @@ test()
 
   for (auto &cell : tria.active_cell_iterators())
   {
-   const unsigned int child_number = Utilities::string_to_int(&(cell->id().to_string().back()));
-   unsigned int color = 0;
-   if (child_number == 1 || child_number == 2)
-       color = 1;
+    const unsigned int child_number = Utilities::string_to_int(&(cell->id().to_string().back()));
+    unsigned int color = 0;
+    if (child_number == 1 || child_number == 2)
+      color = 1;
 
-   cell->set_material_id(color);
+    cell->set_material_id(color);
   }
 
   std::ofstream file("grid-active.vtk");
