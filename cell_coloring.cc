@@ -177,7 +177,7 @@ test()
   // Plot things
   {
     GridOut grid_out;
-    grid_out.write_mesh_per_processor_as_vtu(tria,"grid-active");
+    grid_out.write_mesh_per_processor_as_vtu(tria,"output/grid-active");
   }
 
 
@@ -207,7 +207,7 @@ test()
   data_out.build_patches ();
 
   {
-    std::ofstream file("data-active-" +
+    std::ofstream file("output/data-active-" +
                        Utilities::int_to_string(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
                        + ".vtu");
     data_out.write_vtu(file);
