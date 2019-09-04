@@ -41,7 +41,7 @@ using namespace dealii;
 
 template <int dim>
 Point<dim, unsigned int>
-get_integer_coords (const CellId cell_id)
+get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
 {
 
   std::vector<unsigned int> child_indices;
@@ -92,7 +92,7 @@ get_integer_coords (const CellId cell_id)
       local_coord(1) = 1;
 
 
-    global_coord += std::pow(dim,0)*local_coord;
+    global_coord += std::pow(dim,n_global_level-level-1)*local_coord;
 
     ++level;
   }
@@ -138,7 +138,7 @@ test()
       {
         std::cout << cell->id().to_string() << "     ";
 
-        Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id());
+        Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
         std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
       }
 
