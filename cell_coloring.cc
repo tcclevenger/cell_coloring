@@ -126,6 +126,7 @@ test()
 
 
 
+  std::vector<std::vector<std::vector<typename DoFHandler<dim>::level_cell_iterator>>> coloring(2);
   for (unsigned int level=0; level<tria.n_global_levels(); ++level)
   {
     std::cout << level <<  ": " << std::endl;
@@ -137,12 +138,16 @@ test()
 
         Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
         std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
+
+        unsigned int color = 0;
+        if ((cell_int_coords(0)+cell_int_coords(1))%2 == 1)
+          color = 1;
+
+        coloring[color].push_back(std::vector<typename DoFHandler<dim>::level_cell_iterator>(1,cell));
       }
 
     std::cout << std::endl;
   }
-
-
 
 
 
