@@ -74,7 +74,7 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_levels)
         local_coord(d) = bit_indices[d];
     }
 
-    global_coord += std::pow(dim,n_global_levels-level-1)*local_coord;
+    global_coord += std::pow(2,n_global_levels-level-1)*local_coord;
 
     ++level;
   }
