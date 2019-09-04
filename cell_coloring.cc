@@ -42,22 +42,19 @@ using namespace dealii;
 
 template <int dim>
 Point<dim, unsigned int>
-get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
+get_integer_coords (const CellId cell_id, const unsigned int n_global_levels)
 {
-
+  // Get child indices
   std::vector<unsigned int> child_indices;
-
   std::string cell_id_str = cell_id.to_string();
   while (cell_id_str.size() > 4)
   {
     child_indices.insert(child_indices.begin(),
                          Utilities::string_to_int(&(cell_id_str.back())));
-
     cell_id_str.pop_back();
   }
 
-
-
+  // Initialize global coordinate with coarse cell coordinate
   Point<dim,unsigned int> global_coord;
   const unsigned int coarse_id = cell_id.to_binary<dim>()[0];
   {
@@ -66,8 +63,7 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
       global_coord(d) = bit_indices[d];
   }
 
-
-
+  // Compute local coordinate and add to global
   unsigned int level=1;
   for (auto c : child_indices)
   {
@@ -78,7 +74,7 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
         local_coord(d) = bit_indices[d];
     }
 
-    global_coord += std::pow(dim,n_global_level-level-1)*local_coord;
+    global_coord += std::pow(dim,n_global_levels-level-1)*local_coord;
 
     ++level;
   }
@@ -86,18 +82,46 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
   return global_coord;
 }
 
+template <int dim>
+std::vector<std::vector<std::vector<typename Triangulation<dim>::cell_iterator>>>
+get_coloring (const Triangulation<dim> &tria)
+{
+  std::vector<std::vector<std::vector<typename Triangulation<dim>::cell_iterator>>>
+      coloring(2);
 
+  for (unsigned int level=0; level<tria.n_global_levels(); ++level)
+    for (auto &cell : dof.mg_cell_iterators_on_level(level))
+      if (cell->is_locally_owned_on_level())
+      {
+        // This is for cell patches, so each patch is only 1 cell
+        std::vector<typename DoFHandler<dim>::level_cell_iterator> patch;
+        patch.push_back(cell);
+
+        // Get integer coordinates
+        Point<dim,unsigned int> cell_int_coords
+            = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+
+        // If integer coordinates sum to an even
+        // number give color 0, else give color 1
+        unsigned int color = 0;
+        unsigned int sum = 0;
+        for (unsigned int d=0; d<dim; ++d)
+          sum += cell_int_coords(d);
+        if (sum%2 == 1)
+          color = 1;
+
+        // Add patch to coloring
+        coloring[color].push_back(patch);
+      }
+
+  return coloring;
+}
 
 
 template <int dim>
 void
 test()
 {
-  ConditionalOStream pcout(std::cout,
-                           (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-                            == 0));
-
-
   parallel::distributed::Triangulation<dim> tria(
         MPI_COMM_WORLD,
         Triangulation<dim>::limit_level_difference_at_vertices,
@@ -112,50 +136,48 @@ test()
 
 
 
-  std::vector<std::vector<std::vector<typename DoFHandler<dim>::level_cell_iterator>>> coloring(2);
-  for (unsigned int level=0; level<tria.n_global_levels(); ++level)
-  {
-    std::cout << level <<  ": " << std::endl;
+  std::vector<std::vector<std::vector<typename DoFHandler<dim>::level_cell_iterator>>> coloring
+      = get_coloring(tria);
 
-    for (auto &cell : dof.mg_cell_iterators_on_level(level))
-      if (cell->is_locally_owned_on_level())
-      {
-        std::cout << cell->id().to_string() << "     ";
+  // Output to screen to verify global coordinates
+  //  for (unsigned int level=0; level<tria.n_global_levels(); ++level)
+  //  {
+  //    std::cout << level <<  ": " << std::endl;
 
-        Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
-        std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
+  //    for (auto &cell : dof.mg_cell_iterators_on_level(level))
+  //      if (cell->is_locally_owned_on_level())
+  //      {
+  //        std::cout << cell->id().to_string() << "     ";
 
-        unsigned int color = 0;
-        if ((cell_int_coords(0)+cell_int_coords(1))%2 == 1)
-          color = 1;
+  //        Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+  //        std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
+  //      }
 
-        std::vector<typename DoFHandler<dim>::level_cell_iterator> patch;
-        patch.push_back(cell);
-
-        coloring[color].push_back(patch);
-      }
-
-    std::cout << std::endl;
-  }
+  //    std::cout << std::endl;
+  //  }
 
 
 
   for (auto &cell : dof.active_cell_iterators())
     if (cell->is_locally_owned())
     {
-      Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+      Point<dim,unsigned int> cell_int_coords
+          = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
 
+      // Verify active coordinates
       unsigned int color = 0;
-      if ((cell_int_coords(0)+cell_int_coords(1))%2 == 1)
+      unsigned int sum = 0;
+      for (unsigned int d=0; d<dim; ++d)
+        sum += cell_int_coords(d);
+      if (sum%2 == 1)
         color = 1;
-
       cell->set_material_id(color);
     }
 
+  // Plot things
   {
-    std::ofstream file("grid-active.vtk");
     GridOut grid_out;
-    grid_out.write_vtk(tria,file);
+    grid_out.write_mesh_per_processor_as_vtu(tria,"grid-active");
   }
 
 
@@ -185,8 +207,24 @@ test()
   data_out.build_patches ();
 
   {
-    std::ofstream file("data-active.vtk");
-    data_out.write_vtk(file);
+    std::ofstream file("data-active-" +
+                       Utilities::int_to_string(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
+                       + ".vtu");
+    data_out.write_vtu(file);
+  }
+
+  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  {
+    std::vector<std::string> filenames;
+    for (unsigned int i=0;
+         i<Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+         ++i)
+      filenames.push_back ("data-active-" +
+                           Utilities::int_to_string (i, 4) +
+                           ".vtu");
+
+    std::ofstream master_output (("output/data-active.pvtu").c_str());
+    data_out.write_pvtu_record (master_output, filenames);
   }
 }
 
@@ -198,5 +236,5 @@ main(int argc, char *argv[])
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
   test<2>();
-  //test<3>();
+  test<3>();
 }
