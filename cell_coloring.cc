@@ -144,9 +144,9 @@ test()
           color = 1;
 
         std::vector<typename DoFHandler<dim>::level_cell_iterator> patch;
-        patch.push_back(cell);
+        //patch.push_back(cell);
 
-        coloring[color].push_back(patch);
+        //coloring[color].push_back(patch);
       }
 
     std::cout << std::endl;
