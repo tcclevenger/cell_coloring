@@ -19,6 +19,7 @@
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/utilities.h>
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/numerics/data_out.h>
 #include <deal.II/grid/grid_out.h>
 
 #include <deal.II/distributed/grid_refinement.h>
@@ -55,12 +56,12 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
     cell_id_str.pop_back();
   }
 
-//  std::cout << "Child indices: ";
-//  for (auto it = child_indices.begin();
-//       it != child_indices.end();
-//       ++it)
-//    std::cout << *it << " ";
-//  std::cout << std::endl;
+  //  std::cout << "Child indices: ";
+  //  for (auto it = child_indices.begin();
+  //       it != child_indices.end();
+  //       ++it)
+  //    std::cout << *it << " ";
+  //  std::cout << std::endl;
 
   const unsigned int coarse_id = cell_id.to_binary<dim>()[0];
   Point<dim,unsigned int> global_coord;
@@ -117,7 +118,7 @@ test()
         Triangulation<dim>::limit_level_difference_at_vertices,
         parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy);
   GridGenerator::hyper_cube(tria, 0, 1);
-  tria.refine_global(2);
+  tria.refine_global(3);
 
 
 
@@ -158,9 +159,37 @@ test()
     cell->set_material_id(color);
   }
 
-  std::ofstream file("grid-active.vtk");
-  GridOut grid_out;
-  grid_out.write_vtk(tria,file);
+  {
+    std::ofstream file("grid-active.vtk");
+    GridOut grid_out;
+    grid_out.write_vtk(tria,file);
+  }
+
+
+  DataOut<dim> data_out;
+  Vector<unsigned int> subdomain (tria.n_active_cells());
+  for (unsigned int i=0; i<subdomain.size(); ++i)
+    subdomain(i) = tria.locally_owned_subdomain();
+  data_out.add_data_vector (subdomain, "subdomain", DataOut::DataVectorType::type_cell_data);
+
+
+  Vector<unsigned int> xcoord (tria.n_active_cells());
+  Vector<unsigned int> ycoord (tria.n_active_cells());
+  for (auto &cell : tria.cell_iterators_on_level(level))
+    if (cell->is_locally_owned_on_level())
+    {
+      Point<dim,unsigned int> coord = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+      xcoord(cell->active_cell_index()) = coord(0);
+      ycoord(cell->active_cell_index()) = coord(1);
+    }
+  data_out.add_data_vector (xcoord, "xcoord");
+  data_out.add_data_vector (ycoord, "ycoord");
+  data_out.build_patches ();
+
+  {
+    std::ofstream file("data-active.vtk");
+    data_out.write_vtk (output);
+  }
 }
 
 
