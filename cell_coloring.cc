@@ -163,30 +163,28 @@ test()
 
 
   DataOut<dim> data_out;
-  data_out.attach_dof_handler(dof);
+  data_out.attach_dof_handler (dof);
 
-  Vector<unsigned int> subdomain (tria.n_active_cells());
+  Vector<double> subdomain (triangulation.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
-    subdomain(i) = tria.locally_owned_subdomain();
+    subdomain(i) = triangulation.locally_owned_subdomain();
   data_out.add_data_vector (subdomain, "subdomain");
 
-
-  Vector<unsigned int> xcoord (tria.n_active_cells());
-  Vector<unsigned int> ycoord (tria.n_active_cells());
-  for (auto &cell : tria.active_cell_iterators())
-    if (cell->is_locally_owned_on_level())
-    {
-      Point<dim,unsigned int> coord = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
-      xcoord(cell->active_cell_index()) = coord(0);
-      ycoord(cell->active_cell_index()) = coord(1);
-    }
-  data_out.add_data_vector (xcoord, "xcoord");
-  data_out.add_data_vector (ycoord, "ycoord");
+//  Vector<double> visc_values (triangulation.n_active_cells());
+//  {
+//    Viscosity<dim> viscosity;
+//    viscosity.get_settings_and_sinker(settings,sinker);
+//    typename Triangulation<dim>::active_cell_iterator cell = triangulation.begin_active();
+//    for (;cell!=triangulation.end();++cell)
+//      if (cell->is_locally_owned())
+//        visc_values(cell->active_cell_index()) = viscosity.value(cell->center());
+//    data_out.add_data_vector (visc_values, "viscosity");
+//  }
   data_out.build_patches ();
 
   {
     std::ofstream file("data-active.vtk");
-    data_out.write_vtk (file);
+    data_out.write_vtk(file);
   }
 }
 
