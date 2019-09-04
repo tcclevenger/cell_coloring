@@ -75,8 +75,6 @@ get_integer_coords (const CellId cell_id)
   else
     global_coord(1) = 1;
 
-  std::cout << "global: (" << global_coord(0) << ", " << global_coord(1) << ")" << std::endl;
-
 
   unsigned int level=1;
   for (auto c : child_indices)
