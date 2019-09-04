@@ -155,15 +155,17 @@ test()
 
 
 
-  for (auto &cell : tria.active_cell_iterators())
-  {
-    const unsigned int child_number = Utilities::string_to_int(&(cell->id().to_string().back()));
-    unsigned int color = 0;
-    if (child_number == 1 || child_number == 2)
-      color = 1;
+  for (auto &cell : dof.active_cell_iterators())
+    if (cell->is_locally_owned())
+    {
+      Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
 
-    cell->set_material_id(color);
-  }
+      unsigned int color = 0;
+      if ((cell_int_coords(0)+cell_int_coords(1))%2 == 1)
+        color = 1;
+
+      cell->set_material_id(color);
+    }
 
   {
     std::ofstream file("grid-active.vtk");
