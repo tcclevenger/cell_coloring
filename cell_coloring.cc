@@ -175,7 +175,7 @@ test()
 
   Vector<unsigned int> xcoord (tria.n_active_cells());
   Vector<unsigned int> ycoord (tria.n_active_cells());
-  for (auto &cell : tria.cell_iterators_on_level(level))
+  for (auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned_on_level())
     {
       Point<dim,unsigned int> coord = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
