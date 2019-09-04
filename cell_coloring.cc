@@ -91,7 +91,7 @@ get_integer_coords (const CellId cell_id)
       local_coord(1) = 1;
 
 
-    global_coord += (dim**level)*local_coord;
+    global_coord += std::pow(dim,level)*local_coord;
 
     ++level;
   }
