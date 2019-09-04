@@ -188,7 +188,7 @@ test()
 
   {
     std::ofstream file("data-active.vtk");
-    data_out.write_vtk (output);
+    data_out.write_vtk (file);
   }
 }
 
