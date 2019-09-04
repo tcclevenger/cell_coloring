@@ -138,6 +138,8 @@ test()
 
   std::vector<std::vector<std::vector<typename Triangulation<dim>::cell_iterator>>> coloring
       = get_coloring(tria);
+  //supress warning
+  (void)coloring;
 
   // Output to screen to verify global coordinates
   //  for (unsigned int level=0; level<tria.n_global_levels(); ++level)
@@ -156,31 +158,7 @@ test()
   //    std::cout << std::endl;
   //  }
 
-
-
-  for (auto &cell : dof.active_cell_iterators())
-    if (cell->is_locally_owned())
-    {
-      Point<dim,unsigned int> cell_int_coords
-          = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
-
-      // Verify active coordinates
-      unsigned int color = 0;
-      unsigned int sum = 0;
-      for (unsigned int d=0; d<dim; ++d)
-        sum += cell_int_coords(d);
-      if (sum%2 == 1)
-        color = 1;
-      cell->set_material_id(color);
-    }
-
   // Plot things
-  {
-    GridOut grid_out;
-    grid_out.write_mesh_per_processor_as_vtu(tria,"output/grid-active");
-  }
-
-
   DataOut<dim> data_out;
   data_out.attach_dof_handler (dof);
 
@@ -192,6 +170,7 @@ test()
   Vector<double> xcoord (tria.n_active_cells());
   Vector<double> ycoord (tria.n_active_cells());
   Vector<double> coord_sum (tria.n_active_cells());
+  Vector<double> coloring (tria.n_active_cells());
   for (auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
     {
@@ -199,16 +178,28 @@ test()
       ycoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels())(1);
 
       coord_sum(cell->active_cell_index()) = xcoord(cell->active_cell_index()) + ycoord(cell->active_cell_index());
+
+      // Output coloring based on the logic
+      Point<dim,unsigned int> cell_int_coords
+          = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+      unsigned int color = 0;
+      unsigned int sum = 0;
+      for (unsigned int d=0; d<dim; ++d)
+        sum += cell_int_coords(d);
+      if (sum%2 == 1)
+        color = 1;
+      coloring(cell->active_cell_index()) = color;
     }
   data_out.add_data_vector (xcoord, "xcoord");
   data_out.add_data_vector (ycoord, "ycoord");
   data_out.add_data_vector (coord_sum, "coord_sum");
+  data_out.add_data_vector (coloring, "coloring");
 
   data_out.build_patches ();
 
   {
     std::ofstream file("output/data-active-" +
-                       Utilities::int_to_string(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD))
+                       Utilities::int_to_string(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD),4)
                        + ".vtu");
     data_out.write_vtu(file);
   }
