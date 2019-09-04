@@ -223,7 +223,7 @@ test()
                            Utilities::int_to_string (i, 4) +
                            ".vtu");
 
-    std::ofstream master_output (("output/data-active.pvtu").c_str());
+    std::ofstream master_output ("output/data-active.pvtu");
     data_out.write_pvtu_record (master_output, filenames);
   }
 }
