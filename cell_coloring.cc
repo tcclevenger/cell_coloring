@@ -122,6 +122,7 @@ test()
 
   DoFHandler<dim> dof(tria);
   dof.distribute_dofs(FE_Q<dim>(1));
+  dof.distribute_mg_dofs();
 
 
 
@@ -131,7 +132,7 @@ test()
   {
     //std::cout << level <<  ": " << std::endl;
 
-    for (auto &cell : tria.mg_cell_iterators_on_level(level))
+    for (auto &cell : dof.mg_cell_iterators_on_level(level))
       if (cell->is_locally_owned_on_level())
       {
         //std::cout << cell->id().to_string() << "     ";
