@@ -170,7 +170,7 @@ test()
   Vector<double> xcoord (tria.n_active_cells());
   Vector<double> ycoord (tria.n_active_cells());
   Vector<double> coord_sum (tria.n_active_cells());
-  Vector<double> coloring (tria.n_active_cells());
+  Vector<double> cell_coloring (tria.n_active_cells());
   for (auto &cell : tria.active_cell_iterators())
     if (cell->is_locally_owned())
     {
@@ -188,12 +188,12 @@ test()
         sum += cell_int_coords(d);
       if (sum%2 == 1)
         color = 1;
-      coloring(cell->active_cell_index()) = color;
+      cell_coloring(cell->active_cell_index()) = color;
     }
   data_out.add_data_vector (xcoord, "xcoord");
   data_out.add_data_vector (ycoord, "ycoord");
   data_out.add_data_vector (coord_sum, "coord_sum");
-  data_out.add_data_vector (coloring, "coloring");
+  data_out.add_data_vector (cell_coloring, "coloring");
 
   data_out.build_patches ();
 
