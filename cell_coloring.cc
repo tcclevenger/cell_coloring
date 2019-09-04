@@ -165,9 +165,9 @@ test()
   DataOut<dim> data_out;
   data_out.attach_dof_handler (dof);
 
-  Vector<double> subdomain (triangulation.n_active_cells());
+  Vector<double> subdomain (tria.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
-    subdomain(i) = triangulation.locally_owned_subdomain();
+    subdomain(i) = tria.locally_owned_subdomain();
   data_out.add_data_vector (subdomain, "subdomain");
 
 //  Vector<double> visc_values (triangulation.n_active_cells());
