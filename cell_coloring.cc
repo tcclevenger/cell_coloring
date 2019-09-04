@@ -126,12 +126,6 @@ test()
 
   for (unsigned int level=0; level<tria.n_global_levels(); ++level)
   {
-    if (level==0)
-    {
-      //initialize with 0
-      continue;
-    }
-
     std::cout << level <<  ": " << std::endl;
 
     for (auto &cell : tria.cell_iterators_on_level(level))
@@ -170,7 +164,7 @@ test()
   Vector<unsigned int> subdomain (tria.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
     subdomain(i) = tria.locally_owned_subdomain();
-  data_out.add_data_vector (subdomain, "subdomain", DataOut::DataVectorType::type_cell_data);
+  data_out.add_data_vector (subdomain, "subdomain", DataOut<dim>::DataVectorType::type_cell_data);
 
 
   Vector<unsigned int> xcoord (tria.n_active_cells());
