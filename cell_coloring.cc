@@ -170,16 +170,12 @@ test()
     subdomain(i) = tria.locally_owned_subdomain();
   data_out.add_data_vector (subdomain, "subdomain");
 
-//  Vector<double> visc_values (triangulation.n_active_cells());
-//  {
-//    Viscosity<dim> viscosity;
-//    viscosity.get_settings_and_sinker(settings,sinker);
-//    typename Triangulation<dim>::active_cell_iterator cell = triangulation.begin_active();
-//    for (;cell!=triangulation.end();++cell)
-//      if (cell->is_locally_owned())
-//        visc_values(cell->active_cell_index()) = viscosity.value(cell->center());
-//    data_out.add_data_vector (visc_values, "viscosity");
-//  }
+  Vector<double> xcoord (tria.n_active_cells());
+  for (auto &cell : tria.active_cell_iterators())
+    if (cell->is_locally_owned())
+      xcoord(cell->active_cell_index()) = get_integer_coords<dim>(cell->id(),tria.n_global_levels());
+  data_out.add_data_vector (xcoord, "xcoord");
+
   data_out.build_patches ();
 
   {
