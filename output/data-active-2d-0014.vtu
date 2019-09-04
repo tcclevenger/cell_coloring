@@ -8,7 +8,7 @@
 <Piece NumberOfPoints="16" NumberOfCells="4" >
   <Points>
     <DataArray type="Float32" NumberOfComponents="3" format="binary">
-AQAAAMAAAADAAAAAKgAAAA==eNpjYEABdgzY+XZobChosENTa4ckbkfAHGT9dqhsrOYgqWmAswGxfgnR
+AQAAAMAAAADAAAAAMwAAAA==eNpjYGCwZ2BwAGIQUEBig8QTkMQTsKhxQNObgCSeQMAckHgDkngDAXOQ1TjA2QCq6w/h
     </DataArray>
   </Points>
 
@@ -25,13 +25,13 @@ AQAAAAQAAAAEAAAADAAAAA==eNrj5OTkBAAAXgAl
   </Cells>
   <PointData Scalars="scalars">
     <DataArray type="Float32" Name="subdomain" format="binary">
-AQAAAEAAAABAAAAADAAAAA==eNpjYKAMAAAAQAAB    </DataArray>
+AQAAAEAAAABAAAAADwAAAA==eNpjYEhwZKAAAwA+PwoR    </DataArray>
     <DataArray type="Float32" Name="xcoord" format="binary">
-AQAAAEAAAABAAAAAEQAAAA==eNpjYEAHDfaoGL88AI2IBfk=    </DataArray>
+AQAAAEAAAABAAAAAEwAAAA==eNpjYGhwYEDBC9AwfnkAlE8NAQ==    </DataArray>
     <DataArray type="Float32" Name="ycoord" format="binary">
-AQAAAEAAAABAAAAADwAAAA==eNpjYCAEGuzxYQBdyAX5    </DataArray>
+AQAAAEAAAABAAAAAEQAAAA==eNpjYDjgwIAXP8CLAQxeEQE=    </DataArray>
     <DataArray type="Float32" Name="coord_sum" format="binary">
-AQAAAEAAAABAAAAAEwAAAA==eNpjYEAHDfb4MYMDMgYAxEgG+Q==    </DataArray>
+AQAAAEAAAABAAAAAFAAAAA==eNpjYFBwZEDBBgSwAwoGANIwBxE=    </DataArray>
     <DataArray type="Float32" Name="coloring" format="binary">
 AQAAAEAAAABAAAAAEQAAAA==eNpjYEAHDfb4MSoAAL1IBfk=    </DataArray>
   </PointData>
