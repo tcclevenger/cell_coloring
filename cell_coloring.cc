@@ -103,7 +103,7 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        Point<dim,unsigned int> cell_int_cords = get_integer_cords(cell->id());
+        Point<dim,unsigned int> cell_int_cords = get_integer_cords<dim>(cell->id());
 
       }
 
