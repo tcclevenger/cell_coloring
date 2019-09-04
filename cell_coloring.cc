@@ -198,7 +198,7 @@ test()
   data_out.build_patches ();
 
   {
-    std::ofstream file("output/data-active-" +
+    std::ofstream file("output/data-active-" + Utilities::int_to_string(dim) + "d-" +
                        Utilities::int_to_string(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD),4)
                        + ".vtu");
     data_out.write_vtu(file);
@@ -210,11 +210,13 @@ test()
     for (unsigned int i=0;
          i<Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
          ++i)
-      filenames.push_back ("data-active-" +
-                           Utilities::int_to_string (i, 4) +
+      filenames.push_back ("data-active-" + Utilities::int_to_string(dim) + "d-" +
+                           + Utilities::int_to_string (i, 4) +
                            ".vtu");
 
-    std::ofstream master_output ("output/data-active.pvtu");
+    std::ofstream master_output ("output/data-active-"
+                                 + Utilities::int_to_string(dim) +
+                                 "d.pvtu");
     data_out.write_pvtu_record (master_output, filenames);
   }
 }
