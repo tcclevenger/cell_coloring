@@ -143,7 +143,10 @@ test()
         if ((cell_int_coords(0)+cell_int_coords(1))%2 == 1)
           color = 1;
 
-        coloring[color][0].push_back(cell);
+        std::vector<typename DoFHandler<dim>::level_cell_iterator> patch;
+        patch.push_back(cell);
+
+        coloring[color].push_back(patch);
       }
 
     std::cout << std::endl;
