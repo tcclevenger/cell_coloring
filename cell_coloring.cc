@@ -120,7 +120,7 @@ test()
   GridGenerator::hyper_cube(tria, 0, 1);
   tria.refine_global(3);
 
-  DoFhandler<dim> dof(tria);
+  DoFHandler<dim> dof(tria);
   dof.distirbute_dofs();
 
 
