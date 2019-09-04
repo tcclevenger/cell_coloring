@@ -56,42 +56,27 @@ get_integer_coords (const CellId cell_id, const unsigned int n_global_level)
     cell_id_str.pop_back();
   }
 
-  //  std::cout << "Child indices: ";
-  //  for (auto it = child_indices.begin();
-  //       it != child_indices.end();
-  //       ++it)
-  //    std::cout << *it << " ";
-  //  std::cout << std::endl;
 
-  const unsigned int coarse_id = cell_id.to_binary<dim>()[0];
+
   Point<dim,unsigned int> global_coord;
-  Assert(dim==2,ExcNotImplemented());
-  if (coarse_id==0 || coarse_id==2)
-    global_coord(0) = 0;
-  else
-    global_coord(0) = 1;
+  const unsigned int coarse_id = cell_id.to_binary<dim>()[0];
+  {
+    const std::bitset<dim> bit_indices(coarse_id);
+    for (unsigned int d=0; d<dim; ++d)
+      global_coord(d) = bit_indices[d];
+  }
 
-  if (coarse_id==0 || coarse_id==1)
-    global_coord(1) = 0;
-  else
-    global_coord(1) = 1;
 
 
   unsigned int level=1;
   for (auto c : child_indices)
   {
     Point<dim,unsigned int> local_coord;
-    Assert(dim==2,ExcNotImplemented());
-    if (c==0 || c==2)
-      local_coord(0) = 0;
-    else
-      local_coord(0) = 1;
-
-    if (c==0 || c==1)
-      local_coord(1) = 0;
-    else
-      local_coord(1) = 1;
-
+    {
+      const std::bitset<dim> bit_indices(c);
+      for (unsigned int d=0; d<dim; ++d)
+        local_coord(d) = bit_indices[d];
+    }
 
     global_coord += std::pow(dim,n_global_level-level-1)*local_coord;
 
