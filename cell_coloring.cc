@@ -62,7 +62,7 @@ get_integer_coords (const CellId cell_id)
 //    std::cout << *it << " ";
 //  std::cout << std::endl;
 
-  const unsigned int coarse_id = Utilities::string_to_int(&(cell_id_str.front()));
+  const unsigned int coarse_id = cell_id.to_binary<dim>()[0];
   Point<dim,unsigned int> global_coord;
   Assert(dim==2,ExcNotImplemented());
   if (coarse_id==0 || coarse_id==2)
