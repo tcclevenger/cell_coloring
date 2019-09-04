@@ -163,7 +163,7 @@ test()
 
 
   DataOut<dim> data_out;
-  data_out.attach_dof_handler (dof);
+  //data_out.attach_dof_handler (dof);
 
   Vector<double> subdomain (tria.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
