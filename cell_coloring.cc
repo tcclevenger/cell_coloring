@@ -44,7 +44,7 @@ Point<dim, unsigned int>
 get_integer_cords (const CellId cell_id)
 {
 
-  std::vector child_indices;
+  std::vector<unsigned int> child_indices;
 
   std::string cell_id_str = cell_id.to_string();
   while (cell_id_str.size() > 4)
