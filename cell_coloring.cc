@@ -120,6 +120,9 @@ test()
   GridGenerator::hyper_cube(tria, 0, 1);
   tria.refine_global(3);
 
+  DoFhandler<dim> dof(tria);
+  dof.distirbute_dofs();
+
 
 
 
@@ -160,7 +163,7 @@ test()
 
 
   DataOut<dim> data_out;
-  data_out.attach_triangulation(tria);
+  data_out.attach_dof_handler(dof);
 
   Vector<unsigned int> subdomain (tria.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
