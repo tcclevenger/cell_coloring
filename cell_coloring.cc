@@ -90,7 +90,7 @@ get_coloring (const Triangulation<dim> &tria)
       coloring(2);
 
   for (unsigned int level=0; level<tria.n_global_levels(); ++level)
-    for (auto &cell : dof.mg_cell_iterators_on_level(level))
+    for (auto &cell : tria.cell_iterators_on_level(level))
       if (cell->is_locally_owned_on_level())
       {
         // This is for cell patches, so each patch is only 1 cell
