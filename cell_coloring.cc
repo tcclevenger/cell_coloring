@@ -135,7 +135,7 @@ test()
     for (auto &cell : tria.cell_iterators_on_level(level))
       if (cell->is_locally_owned_on_level())
       {
-        std::cout << cell->id().to_string() << std::endl;
+        std::cout << cell->id().to_string() << "     ";
 
         Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id());
         std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
