@@ -210,7 +210,7 @@ test()
     for (unsigned int i=0;
          i<Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
          ++i)
-      filenames.push_back ("data-active-" + Utilities::int_to_string(dim) + "d-" +
+      filenames.push_back ("data-active-" + Utilities::int_to_string(dim) + "d-"
                            + Utilities::int_to_string (i, 4) +
                            ".vtu");
 
