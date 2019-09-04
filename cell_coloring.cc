@@ -41,7 +41,7 @@ using namespace dealii;
 
 template <int dim>
 Point<dim, unsigned int>
-get_integer_cords (const CellId cell_id)
+get_integer_coords (const CellId cell_id)
 {
 
   std::vector<unsigned int> child_indices;
@@ -55,14 +55,48 @@ get_integer_cords (const CellId cell_id)
     cell_id_str.pop_back();
   }
 
-  std::cout << "Child indices: ";
-  for (auto it = child_indices.begin();
-       it != child_indices.end();
-       ++it)
-    std::cout << *it << " ";
-  std::cout << std::endl;
+//  std::cout << "Child indices: ";
+//  for (auto it = child_indices.begin();
+//       it != child_indices.end();
+//       ++it)
+//    std::cout << *it << " ";
+//  std::cout << std::endl;
 
-  return Point<dim,unsigned int>();
+  const unsigned int coarse_id = Utilities::string_to_int(&(cell_id_str.front()));
+  Point<dim,unsigned int> global_coord;
+  Assert(dim==2,ExcNotImplemented());
+  if (coarse_id==0 || coarse_id==2)
+    global_coord(0) = 0;
+  else
+    global_coord(0) = 1;
+
+  if (coarse_id==0 || coarse_id==1)
+    global_coord(1) = 0;
+  else
+    global_coord(1) = 1;
+
+  unsigned int level=1;
+  for (auto c : child_indices)
+  {
+    Point<dim,unsigned int> local_coord;
+    Assert(dim==2,ExcNotImplemented());
+    if (c==0 || c==2)
+      local_coord(0) = 0;
+    else
+      local_coord(0) = 1;
+
+    if (c==0 || c==1)
+      local_coord(1) = 0;
+    else
+      local_coord(1) = 1;
+
+
+    global_coord += (dim**level)*local_coord;
+
+    ++level;
+  }
+
+  return global_coord;
 }
 
 
@@ -103,8 +137,8 @@ test()
       {
         std::cout << cell->id().to_string() << std::endl;
 
-        Point<dim,unsigned int> cell_int_cords = get_integer_cords<dim>(cell->id());
-
+        Point<dim,unsigned int> cell_int_coords = get_integer_coords<dim>(cell->id());
+        std::cout << "(" << cell_int_coords(0) << ", " << cell_int_coords(1) << ")" << std::endl;
       }
 
     std::cout << std::endl;
