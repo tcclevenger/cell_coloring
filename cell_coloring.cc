@@ -123,7 +123,6 @@ test()
 
 
 
-
   for (unsigned int level=0; level<tria.n_global_levels(); ++level)
   {
     std::cout << level <<  ": " << std::endl;
@@ -161,10 +160,12 @@ test()
 
 
   DataOut<dim> data_out;
+  data_out.attach_triangulation(tria);
+
   Vector<unsigned int> subdomain (tria.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
     subdomain(i) = tria.locally_owned_subdomain();
-  data_out.add_data_vector (subdomain, "subdomain", DataOut<dim>::DataVectorType::type_cell_data);
+  data_out.add_data_vector (subdomain, "subdomain");
 
 
   Vector<unsigned int> xcoord (tria.n_active_cells());
