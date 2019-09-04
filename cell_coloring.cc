@@ -121,7 +121,7 @@ test()
   tria.refine_global(3);
 
   DoFHandler<dim> dof(tria);
-  dof.distirbute_dofs();
+  dof.distribute_dofs(FE_Q<dim>(1));
 
 
 
