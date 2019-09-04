@@ -94,7 +94,7 @@ get_coloring (const Triangulation<dim> &tria)
       if (cell->is_locally_owned_on_level())
       {
         // This is for cell patches, so each patch is only 1 cell
-        std::vector<typename DoFHandler<dim>::level_cell_iterator> patch;
+        std::vector<typename Triangulation<dim>::cell_iterator> patch;
         patch.push_back(cell);
 
         // Get integer coordinates
@@ -136,7 +136,7 @@ test()
 
 
 
-  std::vector<std::vector<std::vector<typename DoFHandler<dim>::level_cell_iterator>>> coloring
+  std::vector<std::vector<std::vector<typename Triangulation<dim>::cell_iterator>>> coloring
       = get_coloring(tria);
 
   // Output to screen to verify global coordinates
